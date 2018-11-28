@@ -2,7 +2,7 @@ package com.gnefedev.react
 
 import kotlinext.js.Object
 import kotlinext.js.clone
-import kotlinx.coroutines.experimental.await
+import kotlinx.coroutines.await
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.JSON
 import react.Component

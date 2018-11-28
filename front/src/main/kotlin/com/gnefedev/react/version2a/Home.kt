@@ -1,6 +1,7 @@
 package com.gnefedev.react.version2a
 
 import com.gnefedev.common.Car
+import com.gnefedev.common.carListSerial
 import com.gnefedev.react.bridge.SelectItem
 import com.gnefedev.react.bridge.column
 import com.gnefedev.react.bridge.datatable
@@ -10,7 +11,8 @@ import com.gnefedev.react.updateState
 import com.gnefedev.react.version2a.Home.Query
 import com.gnefedev.react.version2a.Home.State
 import kotlinext.js.js
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.html.style
 import kotlinx.serialization.internal.StringSerializer
 import kotlinx.serialization.list
@@ -57,11 +59,11 @@ class Home(props: ContextRouter<Query>) : RComponent<ContextRouter<Query>, State
       updateState {
         query = location.query.typed()
       }
-      launch {
+      GlobalScope.launch {
         loadData(location.query.typed())
       }
     }
-    launch {
+    GlobalScope.launch {
       updateState {
         brands = fetchJson("/api/brands", StringSerializer.list)
         colors = fetchJson("/api/colors", StringSerializer.list)
@@ -74,7 +76,7 @@ class Home(props: ContextRouter<Query>) : RComponent<ContextRouter<Query>, State
   private suspend fun loadData(query: QueryTyped) {
     val url = "/api/cars?brand=" + (query.brand ?: "") + "&color=" + (query.color?.name ?: "")
     updateState {
-      cars = fetchJson(url, Car::class.serializer().list)
+      cars = fetchJson(url, carListSerial)
       loaded = true
     }
   }

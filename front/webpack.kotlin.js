@@ -16,12 +16,11 @@ module.exports = {
     devtool: "inline-source-map",
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
-      new webpack.DefinePlugin({
-        'process.env': {
-          NODE_ENV: JSON.stringify('production')
-        }
-      }),
-      new webpack.optimize.UglifyJsPlugin()
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify('production')
+            }
+        })
     ],
     devServer: {
         contentBase: "./build/web/",
@@ -37,5 +36,8 @@ module.exports = {
                 ws: true
             }
         ]
+    },
+    optimization: {
+        minimize: true
     }
 };

@@ -1,10 +1,14 @@
 package com.gnefedev.backend
 
 import com.gnefedev.common.Car
+import com.gnefedev.common.carListSerial
+import com.gnefedev.common.carSerial
+import kotlinx.serialization.*
+import kotlinx.serialization.context.*
+import kotlinx.serialization.internal.ArrayListSerializer
+import kotlinx.serialization.internal.ListLikeSerializer
 import kotlinx.serialization.internal.StringSerializer
-import kotlinx.serialization.json.JSON
-import kotlinx.serialization.list
-import kotlinx.serialization.serializer
+import kotlinx.serialization.json.*
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
@@ -29,37 +33,29 @@ class Application {
 
 @RestController
 class CarsController(
-    private val serializer: JSON,
-    private val carsRepository: CarsRepository
+        private val serializer: JSON,
+        private val carsRepository: CarsRepository
 ) {
+
     @GetMapping("/api/cars")
     fun cars(
-        @RequestParam("color", required = false) color: String?,
-        @RequestParam("brand", required = false) brand: String?
+            @RequestParam("color", required = false) color: String?,
+            @RequestParam("brand", required = false) brand: String?
     ): ResponseEntity<String> = ResponseEntity.ok(
-        serializer.stringify(
-            Car::class.serializer().list,
-            carsRepository.getCars(color, brand)
-        )
+            serializer.stringify(carListSerial, carsRepository.getCars(color, brand))
     )
 
     @GetMapping("/api/brands")
     fun brands(): ResponseEntity<String> = ResponseEntity.ok(
-        serializer.stringify(
-            StringSerializer.list, carsRepository.allBrands()
-        )
-    )
+            serializer.stringify(StringSerializer.list, carsRepository.allBrands()))
 
     @GetMapping("/api/colors")
     fun colors(): ResponseEntity<String> = ResponseEntity.ok(
-        serializer.stringify(
-            StringSerializer.list, carsRepository.allColors()
-        )
-    )
+            serializer.stringify(StringSerializer.list, carsRepository.allColors()))
 
     @PostMapping("/add/car")
     fun addCar(@RequestBody carJson: String) {
-        carsRepository.addCar(serializer.parse(carJson))
+        carsRepository.addCar(serializer.parse(carSerial, carJson))
     }
 }
 
@@ -87,22 +83,22 @@ class CarsRepository {
 
     init {
         val brands = listOf(
-            "Acura", "Audi", "BMW", "Fiat", "Renault", "Mercedes", "Jaguar", "Honda", "Volvo"
+                "Acura", "Audi", "BMW", "Fiat", "Renault", "Mercedes", "Jaguar", "Honda", "Volvo"
         )
         val colors = listOf(
-            "Orange", "Black", "Blue", "White", "Green", "Brown", "Red", "Silver", "Yellow"
+                "Orange", "Black", "Blue", "White", "Green", "Brown", "Red", "Silver", "Yellow"
         )
         val random = Random()
         cars = (0..100).map {
             Car(
-                random.sample(brands),
-                random.sample(colors),
-                random.nextInt(50) + 2018 - 50
+                    random.sample(brands),
+                    random.sample(colors),
+                    random.nextInt(50) + 2018 - 50
             )
         }
     }
 
     private fun Random.sample(brands: List<String>) =
-        brands[nextInt(brands.size)]
+            brands[nextInt(brands.size)]
 
 }

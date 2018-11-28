@@ -2,12 +2,11 @@ allprojects {
     group = 'com.gnefedev'
     buildscript {
         repositories {
-            mavenCentral()
-            maven { url "https://kotlin.bintray.com/kotlinx" }
+            repositories { jcenter() }
         }
         dependencies {
             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-            classpath "org.jetbrains.kotlinx:kotlinx-gradle-serialization-plugin:$kotlinSerializationVersion"
+            classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
         }
     }
 }
